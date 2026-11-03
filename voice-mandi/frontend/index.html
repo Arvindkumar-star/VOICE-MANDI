@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Mandi - किसान आवाज़ सहचरी (10 Indian Languages & Live Weather)</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;600;700;800&family=Noto+Sans+Bengali&family=Noto+Sans+Gujarati&family=Noto+Sans+Gurmukhi&family=Noto+Sans+Kannada&family=Noto+Sans+Malayalam&family=Noto+Sans+Oriya&family=Noto+Sans+Tamil&family=Noto+Sans+Telugu&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-card">
+        <!-- 1. 10-Language Selection Bar & Dropdown -->
+        <div class="language-bar-container">
+            <div class="lang-bar-header">
+                <span class="lang-icon">🌐</span>
+                <label for="languageSelect" class="lang-title">अपनी भाषा चुनें / Select Language:</label>
+                <!-- 10-Language Selection Dropdown with BCP-47 codes -->
+                <select id="languageSelect" class="lang-dropdown" onchange="handleDropdownLanguageChange(this.value)">
+                    <option value="hi-IN" selected>🇮🇳 Hindi (हिन्दी) - hi-IN</option>
+                    <option value="mr-IN">🚩 Marathi (मराठी) - mr-IN</option>
+                    <option value="gu-IN">🌾 Gujarati (ગુજરાતી) - gu-IN</option>
+                    <option value="kn-IN">🌾 Kannada (ಕನ್ನಡ) - kn-IN</option>
+                    <option value="ta-IN">🌾 Tamil (தமிழ்) - ta-IN</option>
+                    <option value="te-IN">🌾 Telugu (తెలుగు) - te-IN</option>
+                    <option value="bn-IN">🌾 Bengali (বাংলা) - bn-IN</option>
+                    <option value="pa-IN">🌾 Punjabi (ਪੰਜਾਬੀ) - pa-IN</option>
+                    <option value="ml-IN">🌾 Malayalam (മലയാളം) - ml-IN</option>
+                    <option value="od-IN">🌾 Odia (ଓଡ଼ିଆ) - od-IN</option>
+                    <option value="en-IN">🌐 English - en-IN</option>
+                </select>
+            </div>
+            <!-- Quick Pills (1-Click Switchers) -->
+            <div class="lang-pills-scroll" id="langPillsContainer">
+                <button class="lang-pill active" data-lang="hi-IN" onclick="selectLanguage('hi-IN')">🇮🇳 हिन्दी</button>
+                <button class="lang-pill" data-lang="mr-IN" onclick="selectLanguage('mr-IN')">🚩 मराठी</button>
+                <button class="lang-pill" data-lang="gu-IN" onclick="selectLanguage('gu-IN')">🌾 ગુજરાતી</button>
+                <button class="lang-pill" data-lang="kn-IN" onclick="selectLanguage('kn-IN')">🌾 ಕನ್ನಡ</button>
+                <button class="lang-pill" data-lang="ta-IN" onclick="selectLanguage('ta-IN')">🌾 தமிழ்</button>
+                <button class="lang-pill" data-lang="te-IN" onclick="selectLanguage('te-IN')">🌾 తెలుగు</button>
+                <button class="lang-pill" data-lang="bn-IN" onclick="selectLanguage('bn-IN')">🌾 বাংলা</button>
+                <button class="lang-pill" data-lang="pa-IN" onclick="selectLanguage('pa-IN')">🌾 ਪੰਜਾਬੀ</button>
+                <button class="lang-pill" data-lang="ml-IN" onclick="selectLanguage('ml-IN')">🌾 മലയാളം</button>
+                <button class="lang-pill" data-lang="od-IN" onclick="selectLanguage('od-IN')">🌾 ଓଡ଼ିଆ</button>
+                <button class="lang-pill" data-lang="en-IN" onclick="selectLanguage('en-IN')">🌐 English</button>
+            </div>
+        </div>
+
+        <!-- Village Header Banner (Dynamic Live Weather from OpenWeather) -->
+        <header class="header">
+            <div class="village-tag" id="villageTag">
+                <span class="pulse-dot"></span>
+                <span id="villageTagText">📍 पुणे ग्रामीण (Pune Village)</span>
+            </div>
+            <div class="weather-badge" id="weatherBadge" title="Live weather via OpenWeather API">
+                ⏳ मौसम लोड हो रहा है... (Live Weather)
+            </div>
+        </header>
+
+        <!-- 2. Farmer Profile Inputs (Name, Village/District, Any Crop with Custom Option) -->
+        <section class="farmer-profile-card">
+            <div class="profile-header">
+                <span class="profile-icon">👨‍🌾</span>
+                <span class="profile-title">किसान विवरण / Farmer Profile (Optional):</span>
+            </div>
+            <div class="profile-grid">
+                <div class="form-group">
+                    <label for="farmerNameInput">नाम (Farmer Name):</label>
+                    <input type="text" id="farmerNameInput" placeholder="उदा. रामदास पाटिल / Suresh" autocomplete="name">
+                </div>
+                <div class="form-group">
+                    <label for="farmerLocationInput">गांव / जिला (Village / District):</label>
+                    <input type="text" id="farmerLocationInput" placeholder="उदा. नाशिक / Surat / Baramati" oninput="onLocationInputChanged()">
+                </div>
+                <div class="form-group">
+                    <label for="farmerCropInput">फसल (Crop - चुनें या कोई भी फसल टाइप करें):</label>
+                    <input type="text" id="farmerCropInput" list="cropList" placeholder="उदा. Tomato, Wheat, Onion, Cotton या कोई भी फसल..." value="">
+                    <datalist id="cropList">
+                        <option value="Onion (प्याज / कांदा / ડુંગળી)">
+                        <option value="Tomato (टमाटर / टोमॅटो / தக்காளி)">
+                        <option value="Potato (आलू / बटाटा / બટાકા)">
+                        <option value="Wheat (गेहूँ / गहू / ઘઉં / ਕਣਕ)">
+                        <option value="Rice (धान / चावल / तांदूळ)">
+                        <option value="Cotton (कपास / कापूस / કપાસ / ਪੱਤੀ)">
+                        <option value="Soybean (सोयाबीन)">
+                        <option value="Garlic (लहसुन / लसूण / લસણ)">
+                        <option value="Chilli (हरी मिर्च / मिरची / மிளகாய்)">
+                        <option value="Ginger (अदरक / आले / આદુ)">
+                        <option value="Maize (मक्का / मका)">
+                        <option value="Sugarcane (गन्ना / ऊस / શેરડી)">
+                        <option value="Groundnut (मूंगफली / शेंगदाणा / મગફળી)">
+                        <option value="Mustard (सरसों / मोहरी / રાઈ)">
+                        <option value="Gram (चना / हरभरा / ચણા)">
+                        <option value="Turmeric (हल्दी / हळद / மஞ்சள்)">
+                    </datalist>
+                </div>
+            </div>
+        </section>
+
+        <main class="main-content">
+            <div class="brand-header">
+                <h1 class="title">🌾 आवाज़ मंडी</h1>
+                <p class="subtitle" id="brandSubtitle">अपनी भाषा में मंडी भाव और मौसम सलाह पूछें</p>
+                <div class="active-lang-badge" id="activeLangBadge">
+                    <span>वर्तमान भाषा: <strong>हिन्दी (hi-IN)</strong> • Sarvam AI 105B</span>
+                </div>
+            </div>
+
+            <!-- Big Mic Recording Circle -->
+            <div class="mic-section">
+                <div class="mic-glow-wrapper">
+                    <button id="micBtn" class="mic-button" title="माईक दबाएं और पूछें" aria-label="Microphone">
+                        <span class="mic-icon">🎙️</span>
+                    </button>
+                    <!-- Visual waveform soundbars during recording -->
+                    <div class="sound-wave hidden" id="soundWave">
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                </div>
+                <div id="statusText" class="status-label">माईक दबाएं और बोलना शुरू करें</div>
+                <div class="sub-status" id="subStatusText">Press Mic & Speak your crop question in your language</div>
+            </div>
+
+            <!-- Quick Query Presets in Active Regional Language -->
+            <div class="preset-section">
+                <div class="preset-label" id="presetSectionTitle">या तुरंत प्रश्न चुनें (Quick Regional Demo Queries):</div>
+                <div class="preset-chips" id="presetChipsContainer">
+                    <!-- Populated dynamically per language -->
+                </div>
+            </div>
+
+            <!-- Output Section -->
+            <div id="outputCard" class="output-card hidden">
+                <!-- Unclear Speech Warning Banner (Feature 3) -->
+                <div id="unclearSpeechBanner" class="unclear-speech-banner hidden">
+                    <span class="unclear-icon">⚠️</span>
+                    <div>
+                        <strong id="unclearTitle">आवाज़ स्पष्ट सुनाई नहीं दी (Unclear / Silent Speech)</strong>
+                        <p id="unclearDesc">कृपया माईक के पास आकर साफ़ आवाज़ में दोबारा बोलें। (Please repeat clearly)</p>
+                    </div>
+                </div>
+
+                <!-- Multilingual Pipeline Inspector Header -->
+                <div class="pipeline-badge-strip">
+                    <div class="pipe-item">
+                        <span class="pipe-label">Farmer:</span>
+                        <strong id="metaFarmerName">किसान भाई</strong>
+                    </div>
+                    <div class="pipe-item">
+                        <span class="pipe-label">Crop:</span>
+                        <strong id="metaCrop" style="color:#2E7D32">Tomato</strong>
+                    </div>
+                    <div class="pipe-item">
+                        <span class="pipe-label">Language:</span>
+                        <strong id="metaLangName">Hindi (hi-IN)</strong>
+                    </div>
+                    <div class="pipe-item">
+                        <span class="pipe-label">Location:</span>
+                        <strong id="metaLocation">Pune</strong>
+                    </div>
+                    <div class="pipe-item">
+                        <span class="pipe-label">Live Weather:</span>
+                        <span id="metaWeather">Loading...</span>
+                    </div>
+                    <div class="pipe-item">
+                        <span class="pipe-label">Voice:</span>
+                        <span>Bulbul (Shubh)</span>
+                    </div>
+                </div>
+
+                <!-- Farmer query box -->
+                <div class="transcript-box">
+                    <div class="box-tag">👨‍🌾 आपने पूछा / Farmer Spoken Query:</div>
+                    <p id="userTranscript">"..."</p>
+                </div>
+
+                <!-- AI Advice Box in Native Language -->
+                <div class="advice-box">
+                    <div class="box-tag">💡 आवाज़ मंडी सलाह (Regional Spoken Advice):</div>
+                    <p id="aiSpokenText">...</p>
+                </div>
+
+                <!-- Audio Controls -->
+                <div class="audio-control">
+                    <button onclick="playAudio()" class="play-btn" id="playAudioBtn">
+                        <span class="play-icon">🔊</span>
+                        <span id="playBtnText">फिर से सुनें (Play Audio)</span>
+                    </button>
+                    <div class="speed-toggle">
+                        <label for="speedSelect">गति (Speed):</label>
+                        <select id="speedSelect" onchange="updatePlaybackSpeed()">
+                            <option value="0.85" selected>0.85x (धीमी / Rural)</option>
+                            <option value="1.0">1.0x (सामान्य / Normal)</option>
+                            <option value="1.15">1.15x (तेज़ / Fast)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Multilingual Intelligence & Analysis Inspector -->
+                <div class="analysis-box">
+                    <div class="analysis-header">
+                        <span class="analysis-icon">🔍</span>
+                        <strong>Multilingual Market Intelligence & Reason Analysis (English)</strong>
+                    </div>
+                    <p id="englishAnalysisText" class="analysis-content">
+                        Loading intelligence analysis...
+                    </p>
+                </div>
+
+                <!-- Weather Warning Callout -->
+                <div class="warning-callout" id="warningCallout">
+                    <span class="warning-icon">⚠️</span>
+                    <span id="weatherWarningText">मौसम स्थिति के अनुसार सावधानी रखें।</span>
+                </div>
+
+                <!-- Best Market Highlight Banner -->
+                <div class="recommended-banner" id="recommendedBanner">
+                    <span class="badge-icon">🏆</span>
+                    <div>
+                        <span class="rec-title">सुझाई गई सबसे अच्छी मंडी (Recommended Mandi):</span>
+                        <strong id="recommendedMarketText">Pune (Manjri)</strong>
+                    </div>
+                </div>
+
+                <!-- Price Comparison Table -->
+                <div class="table-container">
+                    <div class="table-header-row">
+                        <h3 id="tableTitle">📊 लाइव मंडी भाव तुलना (Live Mandi Rates)</h3>
+                        <span class="unit-tag" id="tableUnitTag">किलो और क्विंटल भाव</span>
+                    </div>
+                    <table id="priceTable">
+                        <thead>
+                            <tr>
+                                <th>मंडी (Market)</th>
+                                <th>भाव (Price/Kg)</th>
+                                <th>क्विंटल (Per Qtl)</th>
+                                <th>दूरी (Dist)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <span>Powered by <strong>Sarvam AI</strong> (Saaras STT • Sarvam-105B • Bulbul TTS) & OpenWeather API</span>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
