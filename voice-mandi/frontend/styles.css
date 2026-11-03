@@ -21,6 +21,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -30,23 +31,27 @@ body {
     font-family: 'Mukta', 'Noto Sans Devanagari', 'Noto Sans Tamil', 'Noto Sans Telugu', 'Noto Sans Kannada', 'Noto Sans Malayalam', 'Noto Sans Gujarati', 'Noto Sans Bengali', 'Noto Sans Gurmukhi', 'Noto Sans Oriya', 'Segoe UI', Tahoma, sans-serif;
     color: var(--earth-brown);
     min-height: 100vh;
+    min-height: -webkit-fill-available;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: 20px 14px;
+    padding: max(16px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .app-card {
     background: var(--white);
     border: 3.5px solid var(--primary-green);
     border-radius: var(--border-radius-lg);
-    max-width: 540px;
+    max-width: 580px;
     width: 100%;
     padding: 22px 18px;
     box-shadow: var(--shadow);
     display: flex;
     flex-direction: column;
     gap: 16px;
+    overflow: hidden;
 }
 
 /* 1. 10-Language Selection Bar & Dropdown */
@@ -724,4 +729,274 @@ td strong {
     color: var(--earth-brown-light);
     padding-top: 10px;
     border-top: 1px solid #EEEEEE;
+}
+
+/* ==========================================================================
+   MOBILE & RESPONSIVE ADAPTATIONS (SMARTPHONES, TABLETS & FOLDABLES)
+   ========================================================================== */
+
+/* Universal Touch & Accessibility Enhancements */
+button, select, input {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+.table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* --- Tablets & Large Mobiles (<= 600px) --- */
+@media (max-width: 600px) {
+    body {
+        padding: max(10px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+    }
+
+    .app-card {
+        padding: 16px 12px;
+        border-radius: 20px;
+        border-width: 2.5px;
+        gap: 14px;
+    }
+
+    .title {
+        font-size: clamp(26px, 7vw, 32px);
+    }
+
+    .subtitle {
+        font-size: 14px;
+    }
+
+    .profile-grid {
+        gap: 8px;
+    }
+}
+
+/* --- Standard Mobiles (<= 480px) --- */
+@media (max-width: 480px) {
+    /* Header stacks smoothly to avoid village & weather overlap */
+    .header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding-bottom: 10px;
+    }
+
+    .village-tag, .weather-badge {
+        max-width: 100%;
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+        font-size: 13px;
+        padding: 7px 12px;
+    }
+
+    /* Language bar adapts to mobile screen */
+    .lang-bar-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+    }
+
+    .lang-dropdown {
+        width: 100%;
+        font-size: 14px;
+        padding: 8px 10px;
+        min-height: 42px;
+    }
+
+    /* Farmer Profile inputs stack for easy thumb typing */
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-grid .form-group:last-child {
+        grid-column: span 1;
+    }
+
+    /* Prevent iOS auto-zoom on input focus by ensuring 16px font-size */
+    .form-group input,
+    .form-group select {
+        font-size: 16px;
+        padding: 9px 12px;
+        min-height: 42px;
+    }
+
+    /* Hero Microphone scale for mobile screens */
+    .mic-glow-wrapper {
+        width: 136px;
+        height: 136px;
+    }
+
+    .mic-button {
+        width: 114px;
+        height: 114px;
+        border-width: 5px;
+    }
+
+    .mic-icon {
+        font-size: 46px;
+    }
+
+    .status-label {
+        font-size: 17px;
+        margin-top: 10px;
+    }
+
+    .sub-status {
+        font-size: 12px;
+    }
+
+    /* Sample Query chips touch sizing */
+    .chip {
+        font-size: 12.5px;
+        padding: 7px 12px;
+        min-height: 38px;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    /* Audio controls wrap cleanly */
+    .audio-control {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .play-btn {
+        width: 100%;
+        padding: 12px 14px;
+        font-size: 15px;
+        min-height: 44px;
+    }
+
+    .speed-toggle {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        background: #F1F8E9;
+        padding: 6px 12px;
+        border-radius: var(--border-radius-sm);
+        border: 1px solid #C8E6C9;
+    }
+
+    .speed-toggle select {
+        padding: 6px 10px;
+        min-height: 36px;
+        font-size: 13px;
+    }
+
+    /* Advice box typography */
+    .advice-box p {
+        font-size: 15.5px;
+        line-height: 1.45;
+    }
+
+    .transcript-box p {
+        font-size: 14.5px;
+    }
+
+    .analysis-content {
+        font-size: 12.5px;
+    }
+
+    /* Price Table Mobile Layout */
+    .table-container {
+        padding: 8px 6px;
+    }
+
+    th {
+        font-size: 11.5px;
+        padding: 7px 4px;
+    }
+
+    td {
+        font-size: 12.5px;
+        padding: 8px 4px;
+    }
+
+    td strong {
+        font-size: 13px;
+    }
+
+    /* Ensure rate numbers stay on single line */
+    td:nth-child(2),
+    td:nth-child(3),
+    td:nth-child(4) {
+        white-space: nowrap;
+    }
+
+    /* Pipeline badges */
+    .pipeline-badge-strip {
+        gap: 4px;
+        padding: 6px 8px;
+    }
+
+    .pipe-item {
+        font-size: 11px;
+        padding: 3px 6px;
+    }
+}
+
+/* --- Compact / Small Mobiles (<= 360px - iPhone SE, Galaxy Fold outer screen) --- */
+@media (max-width: 360px) {
+    body {
+        padding: 6px 4px;
+    }
+
+    .app-card {
+        padding: 12px 8px;
+        border-radius: 16px;
+        border-width: 2px;
+    }
+
+    .title {
+        font-size: 24px;
+    }
+
+    .mic-glow-wrapper {
+        width: 120px;
+        height: 120px;
+    }
+
+    .mic-button {
+        width: 100px;
+        height: 100px;
+        border-width: 4px;
+    }
+
+    .mic-icon {
+        font-size: 40px;
+    }
+
+    th, td {
+        font-size: 11px;
+        padding: 6px 3px;
+    }
+
+    .unit-tag {
+        display: none;
+    }
+}
+
+/* --- Desktop & Tablet Wide Screens (>= 768px) --- */
+@media (min-width: 768px) {
+    body {
+        padding: 30px 20px;
+        align-items: center;
+    }
+
+    .app-card {
+        max-width: 600px;
+        padding: 26px 24px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .app-card:hover {
+        box-shadow: 0 16px 40px rgba(46, 125, 50, 0.2);
+    }
 }

@@ -16,3 +16,4 @@ services:
         sync: false
       - key: WEATHER_API_KEY
         sync: false
+
