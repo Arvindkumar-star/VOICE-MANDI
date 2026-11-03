@@ -214,12 +214,14 @@ const farmerLocationInput = document.getElementById('farmerLocationInput');
 const farmerCropInput = document.getElementById('farmerCropInput');
 
 // Resolve API URL across Localhost, Render, and Vercel deployments
+const PRODUCTION_BACKEND_URL = "https://voice-mandi-backend.onrender.com";
+
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get("backend")) {
     const cleanUrl = urlParams.get("backend").replace(/\/$/, "");
     localStorage.setItem("voice_mandi_backend", cleanUrl);
 }
-const storedBackend = localStorage.getItem("voice_mandi_backend") || window.RENDER_BACKEND_URL || "";
+const storedBackend = localStorage.getItem("voice_mandi_backend") || window.RENDER_BACKEND_URL || PRODUCTION_BACKEND_URL;
 
 const BACKEND_BASE = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
     ? (window.location.port === "8000" ? "" : "http://localhost:8000")
