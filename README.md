@@ -214,6 +214,53 @@ Open your browser and navigate to:
 
 ---
 
+## 🚀 Production Cloud Deployment
+
+### 1. Deploy Backend on Render (Free Tier)
+
+Render hosts the FastAPI Python backend and can also serve the village frontend automatically.
+
+1. Create a free account on [Render.com](https://render.com).
+2. Click **New +** → **Web Service**.
+3. Connect your GitHub repository: `https://github.com/Arvindkumar-star/VOICE-MANDI`.
+4. Configure the settings:
+   - **Name**: `voice-mandi-backend` (or your preferred name)
+   - **Language / Runtime**: `Python 3`
+   - **Build Command**: `pip install -r voice-mandi/backend/requirements.txt`
+   - **Start Command**: `python -m uvicorn main:app --app-dir voice-mandi/backend --host 0.0.0.0 --port $PORT`
+5. In **Environment Variables**, add:
+   - `SARVAM_API_KEY` = `<your_sarvam_key>`
+   - `WEATHER_API_KEY` = `<your_openweather_key>`
+6. Click **Create Web Service**. Once deployed, Render will provide a live URL like:
+   `https://voice-mandi-backend.onrender.com`
+
+---
+
+### 2. Deploy Frontend on Vercel (Edge CDN)
+
+Deploy the lightweight village frontend UI on Vercel for lightning-fast edge delivery:
+
+1. Create a free account on [Vercel.com](https://vercel.com).
+2. Click **Add New...** → **Project**.
+3. Import your GitHub repository: `https://github.com/Arvindkumar-star/VOICE-MANDI`.
+4. Under **Root Directory**, click *Edit* and select **`voice-mandi/frontend`** (or leave root).
+5. Click **Deploy**. Vercel will build and provide your live frontend URL (e.g. `https://voice-mandi.vercel.app`).
+
+#### 🔗 Connecting Vercel Frontend to Render Backend:
+- **Instant Zero-Config via Query Param**: Open your live Vercel URL once with `?backend=https://YOUR-RENDER-URL.onrender.com`:
+  `https://your-app.vercel.app/?backend=https://voice-mandi-backend.onrender.com`
+  *(This is automatically remembered in browser localStorage for all future sessions!)*
+- **Or via Vercel Rewrite**: Update `vercel.json` with your actual Render URL:
+  ```json
+  {
+    "routes": [
+      { "src": "^/api/(.*)", "dest": "https://YOUR-RENDER-NAME.onrender.com/api/$1" }
+    ]
+  }
+  ```
+
+---
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -225,3 +272,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Sarvam AI](https://sarvam.ai) for state-of-the-art Indic AI models: **Saaras STT**, **Sarvam-105B**, and **Bulbul TTS**.
 - [OpenWeatherMap](https://openweathermap.org) for real-time global weather and direct geocoding APIs.
 - Indian agricultural APMC mandi networks for price benchmark transparency.
+

@@ -213,8 +213,17 @@ const farmerNameInput = document.getElementById('farmerNameInput');
 const farmerLocationInput = document.getElementById('farmerLocationInput');
 const farmerCropInput = document.getElementById('farmerCropInput');
 
-// Resolve API URL
-const BACKEND_BASE = (window.location.port === "8000") ? "" : "http://localhost:8000";
+// Resolve API URL across Localhost, Render, and Vercel deployments
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get("backend")) {
+    const cleanUrl = urlParams.get("backend").replace(/\/$/, "");
+    localStorage.setItem("voice_mandi_backend", cleanUrl);
+}
+const storedBackend = localStorage.getItem("voice_mandi_backend") || window.RENDER_BACKEND_URL || "";
+
+const BACKEND_BASE = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+    ? (window.location.port === "8000" ? "" : "http://localhost:8000")
+    : storedBackend;
 
 // --- Dynamic Live Weather Fetcher ---
 async function fetchLiveWeather(locationName) {

@@ -1,0 +1,18 @@
+# Render Blueprint for Voice Mandi
+# Deploy instantly on Render (https://render.com)
+services:
+  - type: web
+    name: voice-mandi
+    runtime: python
+    region: singapore # or oregon, frankfurt
+    plan: free
+    buildCommand: pip install -r voice-mandi/backend/requirements.txt
+    startCommand: python -m uvicorn main:app --app-dir voice-mandi/backend --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: SARVAM_API_KEY
+        sync: false
+      - key: WEATHER_API_KEY
+        sync: false
